@@ -1,0 +1,102 @@
+/*
+ * Instant zero-flash CSS rules for Friends Only (Chrome & Firefox).
+ *
+ * Every rule is scoped to html[data-friends-only="true"][data-friends-only-home="true"]
+ * so toggling the extension off in the popup immediately restores hidden items across
+ * open tabs without needing a reload, and non-Home views (profiles, threads, search,
+ * bookmarks, lists) are never affected.
+ *
+ * Virtualized timeline cells (div[data-testid="cellInnerDiv"]) stay mounted at 0px
+ * height with hidden children so X's ResizeObserver recalculates translateY() offsets
+ * cleanly without leaving blank gaps or breaking infinite scroll.
+ */
+
+/* 1. Virtualized Home timeline cells tagged by content.js */
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="cellInnerDiv"][data-friends-only-hidden="true"] {
+  min-height: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="cellInnerDiv"][data-friends-only-hidden="true"] > * {
+  display: none !important;
+}
+
+/* 2. Non-virtualized elements tagged by content.js ("For you" tab, sidebar cards, etc.) */
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-friends-only-hidden="true"]:not([data-testid="cellInnerDiv"]) {
+  display: none !important;
+}
+
+/* 3. Suppress non-Following Home tab feed content immediately while switching to "Following" */
+html[data-friends-only="true"][data-friends-only-home="true"][data-friends-only-foryou-active="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"] {
+  min-height: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+html[data-friends-only="true"][data-friends-only-home="true"][data-friends-only-foryou-active="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"] > * {
+  display: none !important;
+}
+
+/* 4. Standard selectors (no :has()) for sidebar "Who to follow" & ad placements */
+html[data-friends-only="true"][data-friends-only-home="true"]
+  aside[aria-label="Who to follow" i],
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="sidebarColumn"] [data-testid="placementTracking"] {
+  display: none !important;
+}
+
+/* 5. Parent-aware :has() selectors for zero-flash hiding before rAF scan */
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="sidebarColumn"] div:has(> aside[aria-label="Who to follow" i]:only-child) {
+  display: none !important;
+}
+
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has([data-testid="placementTracking"]),
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has([data-testid="UserCell"]),
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(a[href*="/connect_people"]),
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(article[data-testid="tweet"][data-fo-following="false"]),
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(article[data-testid="tweet"][data-fo-promoted="true"]),
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(article[data-testid="tweet"][data-fo-suggested="true"]) {
+  min-height: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has([data-testid="placementTracking"]) > *,
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has([data-testid="UserCell"]) > *,
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(a[href*="/connect_people"]) > *,
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(article[data-testid="tweet"][data-fo-following="false"]) > *,
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(article[data-testid="tweet"][data-fo-promoted="true"]) > *,
+html[data-friends-only="true"][data-friends-only-home="true"]
+  [data-testid="primaryColumn"] [data-testid="cellInnerDiv"]:has(article[data-testid="tweet"][data-fo-suggested="true"]) > * {
+  display: none !important;
+}
